@@ -1,12 +1,14 @@
 import random
 
-from nonebot import on_command
+from nonebot import on_command, get_driver
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, MessageEvent
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
+from nonebot.rule import to_me
 
 from .data import DATA
+from .config import Config
 
 __plugin_meta__ = PluginMetadata(
     name="发病语录",
@@ -14,7 +16,9 @@ __plugin_meta__ = PluginMetadata(
     usage="命令：发病 [发病对象]\n例如：发病 测试",
 )
 
-catch_str = on_command("发病")
+plugin_config = Config.parse_obj(get_driver().config)
+
+catch_str = on_command("发病", rule=to_me() if plugin_config.to_me else None)
 
 
 @catch_str.handle()

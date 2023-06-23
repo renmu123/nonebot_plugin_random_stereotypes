@@ -18,7 +18,7 @@ __plugin_meta__ = PluginMetadata(
 
 plugin_config = Config.parse_obj(get_driver().config)
 
-catch_str = on_command("发病", rule=to_me() if plugin_config.to_me else None)
+catch_str = on_command("发病", aliases={"发癫"}, rule=to_me() if plugin_config.to_me else None, priority=10, block=True)
 
 
 @catch_str.handle()

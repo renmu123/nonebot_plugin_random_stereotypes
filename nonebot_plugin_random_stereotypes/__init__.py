@@ -29,7 +29,13 @@ async def _(matcher: Matcher, arg: Message = CommandArg()):
 
 @catch_str.got("target", "你要对哪个人发病呢？")
 async def _(event: MessageEvent, matcher: Matcher, target: Message = Arg("target")):
+    black_word = plugin_config.black_word
     target_str = target.extract_plain_text().strip()
+    for word in black_word:
+        if word in target_str:
+            # await matcher.reject("你发的消息中包含了黑名单词语，请重新输入！")
+            return
+
     if not target_str:
         await matcher.reject("你发的消息中没有文本，请重新输入！")
 

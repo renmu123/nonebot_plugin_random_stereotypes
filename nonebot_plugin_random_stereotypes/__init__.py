@@ -1,7 +1,8 @@
 import random
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, MessageEvent
+from nonebot.adapters.onebot.v11 import Message
+from nonebot.adapters import Bot, Event
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
@@ -22,15 +23,15 @@ catch_str = on_command("发病", aliases={"发癫"}, rule=to_me() if plugin_conf
 
 
 @catch_str.handle()
-async def _(matcher: Matcher, arg: Message = CommandArg()):
-    if arg.extract_plain_text().strip():
-        matcher.set_arg("target", arg)
+async def _(matcher: Matcher, event: Event):
+    if event.get_plaintext().strip():
+        matcher.set_arg("target", event)
 
 
 @catch_str.got("target", "你要对哪个人发病呢？")
-async def _(event: MessageEvent, matcher: Matcher, target: Message = Arg("target")):
+async def _(matcher: Matcher, event: Event):
     black_word = plugin_config.black_word
-    target_str = target.extract_plain_text().strip()
+    target_str = event.get_plaintext().strip()
     for word in black_word:
         if word in target_str:
             # await matcher.reject("你发的消息中包含了黑名单词语，请重新输入！")
@@ -40,4 +41,4 @@ async def _(event: MessageEvent, matcher: Matcher, target: Message = Arg("target
         await matcher.reject("你发的消息中没有文本，请重新输入！")
 
     msg = random.choice(DATA).format(target_name=target_str)
-    await matcher.finish(MessageSegment.reply(event.message_id) + msg)
+    await matcher.finish(msg)

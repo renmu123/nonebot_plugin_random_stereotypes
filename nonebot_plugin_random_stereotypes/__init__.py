@@ -1,8 +1,7 @@
 import random
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import Message
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Bot, Event, Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
 from nonebot.plugin import PluginMetadata
@@ -23,13 +22,13 @@ catch_str = on_command("发病", aliases={"发癫"}, rule=to_me() if plugin_conf
 
 
 @catch_str.handle()
-async def _(matcher: Matcher, event: Event):
+async def _(matcher: Matcher, event: Event, args: Message = CommandArg()):
     if event.get_plaintext().strip():
-        matcher.set_arg("target", event)
+        matcher.set_arg("target", args)
 
 
 @catch_str.got("target", "你要对哪个人发病呢？")
-async def _(matcher: Matcher, event: Event, args: Message = CommandArg()):
+async def _(matcher: Matcher, args: Message = CommandArg()):
     black_word = plugin_config.black_word
     # target_str = event.get_plaintext().strip()
     target_str = args.extract_plain_text().strip()
